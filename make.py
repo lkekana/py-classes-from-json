@@ -11,7 +11,6 @@ import re
 
 SCRIPT_DIR = Path(__file__).parent
 INPUT_DIR = SCRIPT_DIR / 'input'
-SCHEMA_DIR = SCRIPT_DIR / 'schema'
 OUTPUT_DIR = SCRIPT_DIR / 'output'
 
 def sanitize_input(input_str):
@@ -62,8 +61,24 @@ def main():
     for file in INPUT_DIR.glob('*.json'):
         print(f'Reading {file.name}...')
         with open(file) as f:
-            builder.add_object(json.load(f))
+            j = None
+            try:
+                j = json.load(f)
+            except json.decoder.JSONDecodeError:
+                print(f'Error reading {file.name}. Skipping.')
+                continue
 
+            if not isinstance(j, dict):
+                print(f'Error reading {file.name}. Skipping.')
+                continue
+
+            try:
+                builder.add_object(j)
+            except TypeError:
+                print(f'Error reading {file.name}. Skipping.')
+                continue
+
+    # No exception handling after here, because I want to crash if the schema is invalid.
     JSON_SCHEMA = builder.to_schema()
     JSON_SCHEMA['title'] = root_class_name
 
