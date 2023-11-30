@@ -1,0 +1,5 @@
+# ignore all of macOS's ._* files
+# ignore all of macOS's .DS_Store files
+*._*
+.DS_Store
+**/.DS_Store
