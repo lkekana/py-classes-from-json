@@ -1,0 +1,47 @@
+{
+  "Type": "job.created",
+  "EventId": "78936220",
+  "Timestamp": "2023-05-24T06:04:53.8462094Z",
+  "StartInfo": {
+    "ReleaseKey": "7d1cac2a-ac58-4c21-8b8a-2e35b0d10b68",
+    "Strategy": "JobsCount",
+    "RobotIds": [1],
+    "JobsCount": 1,
+    "Source": "Manual"
+  },
+  "Jobs": {
+      "Id": 24704204,
+      "Key": "353d5b32-4749-4738-850c-48f94eb6fc6b",
+      "State": "Pending",
+      "Source": "Manual",
+      "SourceType": "Manual",
+      "BatchExecutionKey": "31d513d3-09aa-4c9c-998c-35f730fcfa83",
+      "ReleaseName": "bulk edit",
+      "Type": "Unattended",
+      "Robot": {
+        "Id": 1,
+        "Name": "bench-zdqlGiDEkM",
+        "MachineId": 77,
+        "MachineName": "bench-ryenclhIkV",
+        "Description": "FPZuy",
+        "Version": "18.3",
+        "UserName": "oqkMV",
+        "Type": "Unattended",
+        "HostingType": "Standard"
+      },
+      "Release": {
+        "Id": 359,
+        "Key": "0237af09-80a9-450b-b3a0-20c15dd308fa",
+        "ProcessKey": "RunUntilStoppedManually",
+        "ProcessVersion": "",
+        "Name": "RunUntilStoppedManually_all",
+        "Description": "",
+        "IsLatestVersion": false,
+        "InputArguments": null
+      },
+      "InputArguments": null,
+      "OutputArguments": null
+    },
+  "TenantId": 1,
+  "UserId": 2
+}

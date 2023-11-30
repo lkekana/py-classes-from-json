@@ -1,0 +1,25 @@
+{
+  "Type": "job.started",
+  "EventId": "816648dda7394ef7804b5c893ff1c58a",
+  "Timestamp": "2018-11-26T13:49:33.4532871Z",
+  "Job": {
+    "Id": 148649,
+    "Key": "da8fe505-d2a7-4546-b723-cf58807d69ad",
+    "State": "Running",
+    "StartTime": "2018-11-26T13:49:33.4432884Z",
+    "Info": "Waiting for execution to start...",
+    "OutputArguments": null,
+    "Robot": {
+      "Id": 4778,
+      "Name": "local",
+      "MachineName": "PC-DOC"
+    },
+    "Release": {
+      "Id": 353,
+      "Key": "688c79ec-205d-4c6f-a7e2-87c4fb258a92",
+      "ProcessKey": "Doc_AllEvents"
+    }
+  },
+  "TenantId": 1,
+  "OrganizationUnitId": 1
+}
