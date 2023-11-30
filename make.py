@@ -9,6 +9,7 @@ import subprocess
 from pathlib import Path
 import re
 import logging
+import argparse
 
 SCRIPT_DIR = Path(__file__).parent
 INPUT_DIR = SCRIPT_DIR / 'input'
@@ -32,8 +33,28 @@ def ensure_proper_py_names(input_str):
     return input_str
 
 def main():
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.WARNING)
     logger = logging.getLogger('make')
+
+    parser = argparse.ArgumentParser(description="Generate a JSON schema and Python class from one or more JSON files.")
+    parser.add_argument("--input-dir", help="Path to input directory", default="input/")
+    parser.add_argument("--output-dir", help="Path to output directory", default="output/")
+    parser.add_argument("--root-class-name", help="Name of root class / parent object")
+    parser.add_argument("--module-name", help="Name of Python module")
+    parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
+    args = parser.parse_args()
+
+    if args.verbose:
+        # print as much as possible
+        logger.setLevel(logging.DEBUG)
+        logging.getLogger('genson').setLevel(logging.DEBUG)
+        logging.getLogger('jschema_to_python').setLevel(logging.DEBUG)
+
+    if args.input_dir:
+        INPUT_DIR = Path(args.input_dir)
+
+    if args.output_dir:
+        OUTPUT_DIR = Path(args.output_dir)        
 
     if not INPUT_DIR.exists():
         logger.error(f'Input directory does not exist: {INPUT_DIR}')
@@ -47,9 +68,18 @@ def main():
         logger.error(f'No JSON files found in input directory: {INPUT_DIR}')
         return
     
-    root_class_name = input('Please enter a name for root class: ')
+    root_class_name = None
+    if not args.root_class_name:
+        root_class_name = input('Please enter a name for root class: ')
+    else:
+        root_class_name = ensure_proper_py_names(args.root_class_name)
     root_class_name = sanitize_input(root_class_name)
-    module_name = input('Please enter a name for Python module: ')
+
+    module_name = None
+    if not args.module_name:
+        module_name = input('Please enter a name for Python module: ')
+    else:
+        module_name = ensure_proper_py_names(args.module_name)
     module_name = sanitize_input(module_name)
 
     PY_DIR = OUTPUT_DIR / module_name.lower()
