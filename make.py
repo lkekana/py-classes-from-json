@@ -8,6 +8,7 @@ from genson import SchemaBuilder
 import subprocess
 from pathlib import Path
 import re
+import logging
 
 SCRIPT_DIR = Path(__file__).parent
 INPUT_DIR = SCRIPT_DIR / 'input'
@@ -31,16 +32,19 @@ def ensure_proper_py_names(input_str):
     return input_str
 
 def main():
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger('make')
+
     if not INPUT_DIR.exists():
-        print(f'Input directory does not exist: {INPUT_DIR}')
+        logger.error(f'Input directory does not exist: {INPUT_DIR}')
         return
     
     if not OUTPUT_DIR.exists():
-        print(f'Creating output directory: {OUTPUT_DIR}')
+        logger.info(f'Creating output directory: {OUTPUT_DIR}')
         OUTPUT_DIR.mkdir()
     
     if not any(INPUT_DIR.glob('*.json')):
-        print(f'No JSON files found in input directory: {INPUT_DIR}')
+        logger.error(f'No JSON files found in input directory: {INPUT_DIR}')
         return
     
     root_class_name = input('Please enter a name for root class: ')
@@ -51,15 +55,15 @@ def main():
     PY_DIR = OUTPUT_DIR / module_name.lower()
 
     if PY_DIR.exists():
-        print(f'Deleting existing output directory: {PY_DIR}')
+        logger.info(f'Deleting existing output directory: {PY_DIR}')
         for file in PY_DIR.glob('*'):
             os.remove(file)
         os.rmdir(PY_DIR)
 
-    print('Reading JSON files...')
+    logger.info('Reading JSON files...')
     builder = SchemaBuilder()
     for file in INPUT_DIR.glob('*.json'):
-        print(f'Reading {file.name}...')
+        logger.info(f'Reading {file.name}...')
         with open(file) as f:
             j = None
             try:
@@ -82,12 +86,12 @@ def main():
     JSON_SCHEMA = builder.to_schema()
     JSON_SCHEMA['title'] = root_class_name
 
-    print('Generating schema...')
+    logger.info(f'Writing schema to {OUTPUT_DIR}')
     schema_file = OUTPUT_DIR / f'{root_class_name.lower()}.json'
     with open(schema_file, 'w') as f:
         f.write(json.dumps(JSON_SCHEMA, indent=2))
 
-    print('Generating Python class...')
+    logger.info(f'Generating Python class to {PY_DIR}')
     subprocess.run([
         sys.executable,
         '-m',
@@ -102,10 +106,7 @@ def main():
         module_name,
     ], check=True)
 
-    # Re-write the JSON schema, because jschema_to_python deletes it.
-    with open(schema_file, 'w') as f:
-        f.write(builder.to_json(indent=2))
-
+    logger.info('Cleaning up...')
     print('Done.')
 
 
