@@ -5,6 +5,7 @@ import os
 import sys
 import json
 from genson import SchemaBuilder
+from jschema_to_python_2.object_model_module_generator import ObjectModelModuleGenerator
 import subprocess
 from pathlib import Path
 import re
@@ -122,6 +123,7 @@ def main():
         f.write(json.dumps(JSON_SCHEMA, indent=2))
 
     logger.info(f'Generating Python class to {PY_DIR}')
+    '''
     subprocess.run([
         sys.executable,
         '-m',
@@ -135,6 +137,24 @@ def main():
         '-m',
         module_name,
     ], check=True)
+    '''
+
+    # make an object resembling args for ObjectModelModuleGenerator to consume
+    class Args:
+        def __init__(self):
+            self.output_directory = str(PY_DIR)
+            self.force = True
+            self.module_name = module_name
+            self.schema_path = str(schema_file)
+            self.hints_file_path = None
+            self.root_class_name = root_class_name
+
+    # make an instance of Args
+    args = Args()
+
+    # make an instance of ObjectModelModuleGenerator
+    generator = ObjectModelModuleGenerator(args)
+    generator.generate()
 
     logger.info('Cleaning up...')
     print('Done.')

@@ -3,5 +3,10 @@
 *._*
 .DS_Store
 **/.DS_Store
+
+# test files & directories
 input/*
 output/*
+
+# PyCache
+__pycache__/
