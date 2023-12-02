@@ -1,0 +1,248 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "Type": {
+      "type": "string"
+    },
+    "EventId": {
+      "type": "string"
+    },
+    "Timestamp": {
+      "type": "string"
+    },
+    "Job": {
+      "$ref": "#/$defs/Job"
+    },
+    "TenantId": {
+      "type": "integer"
+    },
+    "OrganizationUnitId": {
+      "type": "integer"
+    },
+    "StartInfo": {
+      "$ref": "#/$defs/StartInfo"
+    },
+    "Jobs": {
+      "$ref": "#/$defs/Jobs"
+    },
+    "UserId": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "EventId",
+    "TenantId",
+    "Timestamp",
+    "Type"
+  ],
+  "title": "JobEvent",
+  "$defs": {
+    "Robot": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "integer"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "MachineId": {
+          "type": "integer"
+        },
+        "MachineName": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "Version": {
+          "type": "string"
+        },
+        "UserName": {
+          "type": "string"
+        },
+        "Type": {
+          "type": "string"
+        },
+        "HostingType": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "Description",
+        "HostingType",
+        "Id",
+        "MachineId",
+        "MachineName",
+        "Name",
+        "Type",
+        "UserName",
+        "Version"
+      ]
+    },
+    "Release": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "integer"
+        },
+        "Key": {
+          "type": "string"
+        },
+        "ProcessKey": {
+          "type": "string"
+        },
+        "ProcessVersion": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "IsLatestVersion": {
+          "type": "boolean"
+        },
+        "InputArguments": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "Description",
+        "Id",
+        "InputArguments",
+        "IsLatestVersion",
+        "Key",
+        "Name",
+        "ProcessKey",
+        "ProcessVersion"
+      ]
+    },
+    "Job": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "integer"
+        },
+        "Key": {
+          "type": "string"
+        },
+        "State": {
+          "type": "string"
+        },
+        "StartTime": {
+          "type": "string"
+        },
+        "Info": {
+          "type": "string"
+        },
+        "OutputArguments": {
+          "type": "null"
+        },
+        "Robot": {
+          "$ref": "#/$defs/Robot"
+        },
+        "Release": {
+          "$ref": "#/$defs/Release"
+        }
+      },
+      "required": [
+        "Id",
+        "Info",
+        "Key",
+        "OutputArguments",
+        "Release",
+        "Robot",
+        "StartTime",
+        "State"
+      ]
+    },
+    "StartInfo": {
+      "type": "object",
+      "properties": {
+        "ReleaseKey": {
+          "type": "string"
+        },
+        "Strategy": {
+          "type": "string"
+        },
+        "RobotIds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "JobsCount": {
+          "type": "integer"
+        },
+        "Source": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "JobsCount",
+        "ReleaseKey",
+        "RobotIds",
+        "Source",
+        "Strategy"
+      ]
+    },
+    "Jobs": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "integer"
+        },
+        "Key": {
+          "type": "string"
+        },
+        "State": {
+          "type": "string"
+        },
+        "Source": {
+          "type": "string"
+        },
+        "SourceType": {
+          "type": "string"
+        },
+        "BatchExecutionKey": {
+          "type": "string"
+        },
+        "ReleaseName": {
+          "type": "string"
+        },
+        "Type": {
+          "type": "string"
+        },
+        "Robot": {
+          "$ref": "#/$defs/Robot"
+        },
+        "Release": {
+          "$ref": "#/$defs/Release"
+        },
+        "InputArguments": {
+          "type": "null"
+        },
+        "OutputArguments": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "BatchExecutionKey",
+        "Id",
+        "InputArguments",
+        "Key",
+        "OutputArguments",
+        "Release",
+        "ReleaseName",
+        "Robot",
+        "Source",
+        "SourceType",
+        "State",
+        "Type"
+      ]
+    }
+  }
+}

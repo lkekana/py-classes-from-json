@@ -2,49 +2,6 @@ import sys
 from jschema_to_python_2.python_file_generator import PythonFileGenerator
 import jschema_to_python_2.utilities as util
 
-_TYPE_MAPPING = {
-    "string": "str",
-    "integer": "int",
-    "number": "float",
-    "boolean": "bool",
-}
-
-_KEYWORD_PROPS = {
-    "False": True,
-    "def": True,
-    "if": True,
-    "raise": True,
-    "None": True,
-    "del": True,
-    "import": True,
-    "return": True,
-    "True": True,
-    "elif": True,
-    "in": True,
-    "try": True,
-    "and": True,
-    "else": True,
-    "is": True,
-    "while": True,
-    "as": True,
-    "except": True,
-    "lambda": True,
-    "with": True,
-    "assert": True,
-    "finally": True,
-    "nonlocal": True,
-    "yield": True,
-    "break": True,
-    "for": True,
-    "not": True,
-    "class": True,
-    "from": True,
-    "or": True,
-    "continue": True,
-    "global": True,
-    "pass": True,
-}
-
 class ClassGenerator(PythonFileGenerator):
     def __init__(self, class_schema, class_name, code_gen_hints, output_directory):
         super(ClassGenerator, self).__init__(output_directory)
@@ -91,8 +48,8 @@ class ClassGenerator(PythonFileGenerator):
 
     def _write_class_declaration(self):
         parent_type = "object"
-        if "type" in self.class_schema and type(self.class_schema["type"]) == str and self.class_schema["type"] in _TYPE_MAPPING:
-            parent_type = _TYPE_MAPPING[ self.class_schema["type"] ]
+        if "type" in self.class_schema and type(self.class_schema["type"]) == str and self.class_schema["type"] in util._TYPE_MAPPING:
+            parent_type = util._TYPE_MAPPING[ self.class_schema["type"] ]
         elif "properties" not in self.class_schema:
             # workaround in case of untyped/dynamic schema objects, such as .NET's dictionaries
             parent_type = "dict"
@@ -138,7 +95,7 @@ class ClassGenerator(PythonFileGenerator):
         python_property_name = self._make_python_property_name_from_schema_property_name(
             schema_property_name
         )
-        if python_property_name in _KEYWORD_PROPS:
+        if python_property_name in util._KEYWORD_PROPS:
             python_property_name = "_" + python_property_name
         
         attrib = "".join(["    ", python_property_name, " = attr.ib("])
@@ -197,7 +154,7 @@ class ClassGenerator(PythonFileGenerator):
         else:
             property_name = property_name_hint["arguments"]["pythonPropertyName"]
         # return util.to_underscore_separated_name(property_name)
-        return property_name
+        return util.ensure_valid_class_or_attribute_name(property_name)
 
     def _get_hint(self, hint_key, hint_kind):
         if not self.code_gen_hints or hint_key not in self.code_gen_hints:

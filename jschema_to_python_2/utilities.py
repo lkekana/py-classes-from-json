@@ -2,7 +2,50 @@ import os
 import shutil
 import sys
 import jsonpickle
+import re
 
+_TYPE_MAPPING = {
+    "string": "str",
+    "integer": "int",
+    "number": "float",
+    "boolean": "bool",
+}
+
+_KEYWORD_PROPS = {
+    "False": True,
+    "def": True,
+    "if": True,
+    "raise": True,
+    "None": True,
+    "del": True,
+    "import": True,
+    "return": True,
+    "True": True,
+    "elif": True,
+    "in": True,
+    "try": True,
+    "and": True,
+    "else": True,
+    "is": True,
+    "while": True,
+    "as": True,
+    "except": True,
+    "lambda": True,
+    "with": True,
+    "assert": True,
+    "finally": True,
+    "nonlocal": True,
+    "yield": True,
+    "break": True,
+    "for": True,
+    "not": True,
+    "class": True,
+    "from": True,
+    "or": True,
+    "continue": True,
+    "global": True,
+    "pass": True,
+}
 
 def capitalize_first_letter(identifier):
     return identifier[0].capitalize() + identifier[1:]
@@ -91,3 +134,13 @@ def make_frequency_table(schema_object, frequency_table=None):
             frequency_table[schema_object["$ref"]] += 1
 
     return frequency_table
+
+def ensure_valid_class_or_attribute_name(name):
+    # Replace characters that are not allowed in Python identifiers with underscores
+    fixed_name = re.sub(r'[^a-zA-Z0-9_]', '_', name)
+    
+    # Ensure the name starts with a letter or underscore
+    if not fixed_name[0].isalpha() and fixed_name[0] != '_':
+        fixed_name = '_' + fixed_name
+    
+    return fixed_name

@@ -16,6 +16,9 @@ SCRIPT_DIR = Path(__file__).parent
 INPUT_DIR = SCRIPT_DIR / 'input'
 OUTPUT_DIR = SCRIPT_DIR / 'output'
 
+# key = class name, value = schema
+sub_definitions = {}
+
 def sanitize_input(input_str):
     # Replace invalid characters with underscores
     return re.sub(r'[^A-Za-z0-9_]', '_', input_str)
@@ -32,6 +35,54 @@ def ensure_proper_py_names(input_str):
     if input_str.startswith('_'):
         input_str = 'x' + input_str
     return input_str
+
+
+def collect_and_reorder_inner_objects(schema):
+    print('\n\n' + str(schema))
+    if not isinstance(schema, dict):
+        return schema
+    
+    objects_to_reorder = []
+
+    # if we were passed an object
+    if schema.get('properties') is not None:
+        for key, value in schema.get('properties', {}).items():
+            if value.get('type') == 'object':
+                schema['properties'][key] = collect_and_reorder_inner_objects(value)
+                sub_definitions[key] = value
+                objects_to_reorder.append(key)
+            elif value.get('type') == 'array':
+                schema['properties'][key] = collect_and_reorder_inner_objects(value)
+
+        for key in objects_to_reorder:
+            schema['properties'][key] = {'$ref': f'#/$defs/{key}'}
+
+    # if we were passed an array
+    elif schema.get('items') is not None:
+        for key, value in schema.get('items', {}).items():
+            # check if value is a dict
+            if isinstance(value, dict) and value.get('type') == 'object':
+                schema['items'][key] = collect_and_reorder_inner_objects(value)
+                sub_definitions[key] = value
+                objects_to_reorder.append(key)
+
+        for key in objects_to_reorder:
+            schema['items'][key] = {'$ref': f'#/$defs/{key}'}
+
+    print(str(schema) + '\n\n')
+    return schema
+
+    
+
+# input json schema (dict), output json schema (dict) with definitions placed at the end
+def refactor_inner_classes(schema):
+    collect_and_reorder_inner_objects(schema)
+    schema['$defs'] = {}
+    for key, value in sub_definitions.items():
+        schema['$defs'][key] = value
+    sub_definitions.clear()
+    return schema
+
 
 def main():
     logging.basicConfig(level=logging.WARNING)
@@ -93,7 +144,13 @@ def main():
 
     logger.info('Reading JSON files...')
     builder = SchemaBuilder()
+    # for each json in INPUT_DIR that does not end with -schema.json
     for file in INPUT_DIR.glob('*.json'):
+        logger.info(f'Checking {file.name}...')
+        if file.name.endswith('-schema.json'):
+            logger.info(f'Skipping {file.name}...')
+            continue
+
         logger.info(f'Reading {file.name}...')
         with open(file) as f:
             j = None
@@ -116,9 +173,10 @@ def main():
     # No exception handling after here, because I want to crash if the schema is invalid.
     JSON_SCHEMA = builder.to_schema()
     JSON_SCHEMA['title'] = root_class_name
+    JSON_SCHEMA = refactor_inner_classes(JSON_SCHEMA)
 
     logger.info(f'Writing schema to {OUTPUT_DIR}')
-    schema_file = OUTPUT_DIR / f'{root_class_name.lower()}.json'
+    schema_file = OUTPUT_DIR / f'{root_class_name.lower()}-schema.json'
     with open(schema_file, 'w') as f:
         f.write(json.dumps(JSON_SCHEMA, indent=2))
 
