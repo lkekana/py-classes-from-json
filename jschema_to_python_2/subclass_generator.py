@@ -14,9 +14,6 @@ class SubclassGenerator(object):
             # this is because the factory functions for these types will not work if the property is not already defined
             for property_name in self.required_property_names:
                 property_schema = class_schema["properties"][property_name]
-                print("!!!!")
-                print(property_schema)
-                
                 if property_schema.get("type") == "array" or property_schema.get("type") == "object":
                     self.required_property_names.remove(property_name)
                     self.required_property_names.append(property_name)

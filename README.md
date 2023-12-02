@@ -4,6 +4,7 @@ Uses both genson and Microsoft's jschema-to-python to achieve this.
 
 ## Installation
 ```bash
+git clone (this repo)
 pip install -r requirements.txt
 ```
 
@@ -31,6 +32,11 @@ optional arguments:
 ## Example
 ```bash
 python make.py --input-dir ./examples --output-dir ./examples --root-class-name JobEvent --module-name myEvents
+```
+
+You can also test the generated classes by running the following (in the examples folder)
+```bash
+python test.py
 ```
 
 ## Thanks to

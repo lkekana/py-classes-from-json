@@ -38,7 +38,6 @@ def ensure_proper_py_names(input_str):
 
 
 def collect_and_reorder_inner_objects(schema):
-    print('\n\n' + str(schema))
     if not isinstance(schema, dict):
         return schema
     
@@ -69,7 +68,6 @@ def collect_and_reorder_inner_objects(schema):
         for key in objects_to_reorder:
             schema['items'][key] = {'$ref': f'#/$defs/{key}'}
 
-    print(str(schema) + '\n\n')
     return schema
 
     
@@ -133,8 +131,9 @@ def main():
     else:
         module_name = ensure_proper_py_names(args.module_name)
     module_name = sanitize_input(module_name)
+    module_name = module_name.lower()
 
-    PY_DIR = OUTPUT_DIR / module_name.lower()
+    PY_DIR = OUTPUT_DIR / module_name
 
     if PY_DIR.exists():
         logger.info(f'Deleting existing output directory: {PY_DIR}')
