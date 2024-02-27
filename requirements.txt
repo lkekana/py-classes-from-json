@@ -1,7 +1,4 @@
-attrs==20.3.0
+attrs==23.2.0
 genson==1.2.2
-attrs==20.3.0
-jsonpickle==2.2.0
+jsonpickle==3.0.3
 pbr==6.0.0
-pytest==0.0.0
-setuptools==50.3.1.post20201107

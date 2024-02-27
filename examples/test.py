@@ -17,7 +17,7 @@ print(json.dumps(attr.asdict(jobCreated), indent=4))
 
 with open('job.started.json') as f:
     j = json.load(f)
-    jobStarted = Jobs(**j)
+    jobStarted = JobEvent(**j)
 # print(jobStarted)
 
 # print the object as json
